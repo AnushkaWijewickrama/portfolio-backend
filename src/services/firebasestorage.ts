@@ -3,7 +3,7 @@ import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
 const storage = new Storage({
-    keyFilename: path.join(__dirname, '../json/fir-78726-firebase-adminsdk-34sx9-4fc57313af.json'),
+    keyFilename: path.join(__dirname, '../../json/fir-78726-firebase-adminsdk-34sx9-4fc57313af.json'),
     projectId: 'fir-78726',
 });
 
