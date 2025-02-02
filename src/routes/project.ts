@@ -4,9 +4,9 @@ const projectrouter = expressproduct.Router();
 const projectverifyToken = require('../middleware/authMiddleware');
 const upload = require('../helpers/storage');
 
-projectrouter.get('/', projectController.getProjects);
-projectrouter.delete('/:id', projectverifyToken, projectController.deleteProductDetails);
-projectrouter.post('/', upload, projectverifyToken, projectController.postProject);
-projectrouter.put('/:id', upload, projectverifyToken, projectController.updateProject);
+projectrouter.get('/project', projectController.getProjects);
+projectrouter.delete('/project/:id', projectverifyToken, projectController.deleteProductDetails);
+projectrouter.post('/project', upload, projectverifyToken, projectController.postProject);
+projectrouter.put('/project/:id', upload, projectverifyToken, projectController.updateProject);
 
 module.exports = projectrouter;
