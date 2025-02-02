@@ -23,7 +23,6 @@ const doc = {
     security: [{ bearerAuth: [] }],
 };
 
-// Paths to your route files
 const outputFile = "./swagger-output.json";
 const endpointsFiles = ["./src/routes/project.ts", "./src/routes/user.ts"]; // Add more route files if needed
 
