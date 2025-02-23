@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
-    "dev": "nodemon src/app.ts"
+    "dev": "nodemon src/app.ts",
+    "vercel-build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +21,7 @@
     "connection-state": "^0.1.0",
     "cors": "^2.8.5",
     "dotenv": "^8.6.0",
-    "express": "^4.19.2",
+    "express": "^4.21.2",
     "firebase-admin": "^12.0.0",
     "jsonwebtoken": "^9.0.2",
     "mailgen": "^2.0.28",
@@ -40,7 +41,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/mongoose": "^5.11.97",
-    "@types/node": "^22.10.7",
+    "@types/node": "^22.13.5",
     "@types/swagger-ui-express": "^4.1.7",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.20.0",
