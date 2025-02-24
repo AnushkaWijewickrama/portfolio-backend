@@ -55,4 +55,13 @@ export class ProjectService {
             return null;
         }
     };
+    static async updateProjectId(id: string, updates: any) {
+        try {
+            const updatedProductDetails = await Project.findByIdAndUpdate(id, updates, { new: true });
+            return updatedProductDetails;
+        } catch (error: any) {
+            throw new Error(`Error updating product: ${error.message}`);
+        }
+    }
 }
+

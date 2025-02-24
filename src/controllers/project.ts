@@ -57,58 +57,65 @@ export const deleteProductDetails = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Error deleting project", error });
     }
 };
-export const updateProject = async (req: any, res: Response): Promise<void> => {
+export const updateProjectDetails = async (req: any, res: Response) => {
+    // title: { type: String, required: true },
+    // description: { type: String, required: true },
+    // longDescription: { type: String },
+    // imagePath: [{ type: String }],
+    // projectYear: { type: String, required: true },
+    // projectType: { type: String, required: true },
     try {
         const { id } = req.params;
         const { title, description, longDescription, projectYear, projectType } = req.body;
 
+        // Find product details by ID
         const projectDetails = await ProjectService.getProjectById(id);
         if (!projectDetails) {
-            res.status(404).json({ error: "Project not found" });
-            return;
+            return res.status(404).json({ error: "Product not found" });
         }
 
-        const imageData: Express.Multer.File[] | undefined = req?.files?.image as Express.Multer.File[];
+        let newImages: string[] = [];
 
-        console.log("Received files:", req.files);
-
-        let imagePath: string[] = [];
-
-        try {
-            if (imageData && imageData.length > 0) {
-                console.log("Uploading new images to Firebase...");
-
-                const uploadPromises = imageData.map((file) =>
-                    FirebaseStorageService.uploadFile(file, 'project')
-                );
-
-                const uploadedImages = await Promise.all(uploadPromises);
-                console.log("Uploaded Images:", uploadedImages);
-
-                imagePath = uploadedImages;  // Replace the existing images with new ones
-            } else {
-                console.log("No new images provided, retaining old images...");
-                imagePath = projectDetails.imagePath || [];
-            }
-        } catch (uploadError) {
-            console.error("Error uploading images to Firebase:", uploadError);
-            res.status(500).json({ message: "Image upload failed." });
-            return;
+        // Handle image uploads
+        if (req.files && req.files.image) {
+            const imageData = Array.isArray(req.files.image) ? req.files.image : [req.files.image];
+            newImages = await FirebaseStorageService.uploadFiles(imageData, "projects");
         }
 
-        const updatedProject = await ProjectService.updateProject(id, {
-            title,
-            description,
-            longDescription,
-            imagePath,  // Use the updated image path
-            projectYear,
-            projectType
-        });
+        // Retain existing images if necessary
+        const updatedImages = projectDetails.imagePath.filter((data: any) =>
+            req.body?.image?.includes(data)
+        );
+        const finalImages = updatedImages.concat(newImages);
 
-        res.status(200).json({ project: updatedProject });
+        // Prepare updates
+        const updates: Partial<typeof projectDetails> = {
+            ...(title && { title }),
+            ...(description && { description }),
+            ...(longDescription && { longDescription }),
+            ...(projectType && { projectType }),
+            ...(projectYear && { projectYear }),
+            imagePath: finalImages,
+        };
+
+        // Update product details
+        const updatedProductDetails = await ProjectService.updateProjectId(id, updates);
+
+        res.status(200).json(updatedProductDetails);
     } catch (error) {
-        console.error("Error updating project:", error);
-        res.status(500).json({ message: "Project update failed." });
+        console.error("Error in updating product:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+export const getProject = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        console.log(id);
+        const project = await ProjectService.getProjectById(id); // assuming ProjectService has this method
+        console.log(project, '');
+        res.status(200).json(project);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching project", error });
     }
 };
 
