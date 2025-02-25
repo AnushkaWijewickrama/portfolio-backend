@@ -23,7 +23,7 @@ const doc = {
     security: [{ bearerAuth: [] }],
 };
 
-const outputFile = "./swagger-output.json";
+const outputFile = "../swagger-output.json";
 const endpointsFiles = ["./src/routes/project.ts", "./src/routes/user.ts"]; // Add more route files if needed
 
 swaggerAutogen(outputFile, endpointsFiles, doc).then(() => {
