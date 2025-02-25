@@ -41,4 +41,4 @@ app.get("/", (req: Request, res: Response): any => {
 });
 
 // Export the app for testing or other purposes
-export default app;
+module.exports = app;
