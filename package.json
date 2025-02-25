@@ -4,10 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "postinstall": "npm install",
     "build": "tsc",
     "start": "node dist/app.js",
-    "dev": "nodemon src/app.ts",
-    "vercel-build": "tsc"
+    "dev": "nodemon src/app.ts"
   },
   "keywords": [],
   "author": "",
