@@ -4,7 +4,9 @@
     "rootDir": "./src",
     "module": "CommonJS",
     "target": "ES6",
-    "strict": true
+    "strict": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*"]
 }
