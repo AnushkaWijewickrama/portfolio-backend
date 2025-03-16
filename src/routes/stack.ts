@@ -5,9 +5,9 @@ const stackverifyToken = require('../middleware/authMiddleware');
 const stackUpload = require('../helpers/storage');
 
 stackRouter.get('/stack', stackController.getStacks);
-// projectrouter.delete('/project/:id', projectverifyToken, projectController.deleteProductDetails);
-stackRouter.post('/stack', stackUpload, stackController.postStack);
-// projectrouter.put('/project/:id', stackUpload, projectverifyToken, projectController.updateProjectDetails);
-// projectrouter.get('/project/:id', stackUpload, projectverifyToken, projectController.getProject);
+stackRouter.delete('/stack/:id', stackverifyToken, stackController.deleteStackDetails);
+stackRouter.post('/stack', stackUpload, stackverifyToken, stackController.postStack);
+stackRouter.put('/stack/:id', stackUpload, stackverifyToken, stackController.updateStackDetails);
+stackRouter.get('/stack/:id', stackUpload, stackverifyToken, stackController.getStack);
 
 module.exports = stackRouter;
