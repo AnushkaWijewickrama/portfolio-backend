@@ -6,6 +6,7 @@ import swaggerUi from "swagger-ui-express";
 const swaggerDocs = require("../swagger-output.json");
 const userRoutes = require('./routes/user');
 const projectRoutes = require('./routes/project');
+const stackRoutes = require('./routes/stack');
 
 
 dotenv.config(); // Load environment variables
@@ -34,6 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/api', userRoutes);
 app.use('/api', projectRoutes);
+app.use('/api', stackRoutes);
 
 // Routes
 app.get("/", (req: Request, res: Response): any => {
