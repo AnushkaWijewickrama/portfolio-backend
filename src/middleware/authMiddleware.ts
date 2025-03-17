@@ -11,7 +11,12 @@ const verifyToken = (req: any, res: Response, next: NextFunction): void => {
     }
 
     try {
-        const decoded = jwt.verify(token[1], process.env.JWT_SECRET as string) as { userId: string };
+        const decoded = jwt.verify(token[1], process.env.JWT_SECRET as string) as { userId: string , exp: number };
+        
+        if (Date.now() >= decoded.exp * 1000) {
+            return res.status(401).json({ error: 'Token expired' });
+        }
+
         req.userId = decoded.userId;
         next();
     } catch (error) {
