@@ -11,7 +11,7 @@ export const getProjects = async (req: Request, res: Response) => {
     }
 };
 export const postProject = async (req: any, res: Response): Promise<void> => {
-    const { title, description, longDescription, projectYear, projectType } = req.body;
+    const { title, description, longDescription, projectYear, projectType, projectLink } = req.body;
     const imageData: Express.Multer.File[] | undefined = req?.files?.image as Express.Multer.File[];
     const imagePath: string[] = [];
 
@@ -36,6 +36,7 @@ export const postProject = async (req: any, res: Response): Promise<void> => {
             imagePath,
             projectYear,
             projectType,
+            projectLink
         };
 
         // Save project using the service class
@@ -58,15 +59,9 @@ export const deleteProductDetails = async (req: Request, res: Response) => {
     }
 };
 export const updateProjectDetails = async (req: any, res: Response) => {
-    // title: { type: String, required: true },
-    // description: { type: String, required: true },
-    // longDescription: { type: String },
-    // imagePath: [{ type: String }],
-    // projectYear: { type: String, required: true },
-    // projectType: { type: String, required: true },
     try {
         const { id } = req.params;
-        const { title, description, longDescription, projectYear, projectType } = req.body;
+        const { title, description, longDescription, projectYear, projectType, projectLink } = req.body;
 
         // Find product details by ID
         const projectDetails = await ProjectService.getProjectById(id);
@@ -95,6 +90,7 @@ export const updateProjectDetails = async (req: any, res: Response) => {
             ...(longDescription && { longDescription }),
             ...(projectType && { projectType }),
             ...(projectYear && { projectYear }),
+            ...(projectLink && { projectLink }),
             imagePath: finalImages,
         };
 
