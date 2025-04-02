@@ -11,7 +11,7 @@ export const getProjects = async (req: Request, res: Response) => {
     }
 };
 export const postProject = async (req: any, res: Response): Promise<void> => {
-    const { title, description, longDescription, projectYear, projectType, projectLink } = req.body;
+    const { title, description, longDescription, projectYear, projectType, projectLink, techStack } = req.body;
     const imageData: Express.Multer.File[] | undefined = req?.files?.image as Express.Multer.File[];
     const imagePath: string[] = [];
 
@@ -28,7 +28,7 @@ export const postProject = async (req: any, res: Response): Promise<void> => {
             return;
         }
 
-        // Save product to the database
+        const techStackArray = Array.isArray(techStack) ? techStack : [techStack];
         const projectData: any = {
             title,
             description,
@@ -36,11 +36,12 @@ export const postProject = async (req: any, res: Response): Promise<void> => {
             imagePath,
             projectYear,
             projectType,
-            projectLink
+            projectLink,
+            techStack: techStackArray
         };
 
         // Save project using the service class
-        const createdProject = await ProjectService.saveProject(projectData)
+        const createdProject = await ProjectService.saveProject(projectData);
 
         const createdProduct = await createdProject.save();
         res.status(201).json({ product: createdProduct });
@@ -49,6 +50,7 @@ export const postProject = async (req: any, res: Response): Promise<void> => {
         res.status(500).json({ message: 'Image processing failed.' });
     }
 };
+
 export const deleteProductDetails = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -61,7 +63,7 @@ export const deleteProductDetails = async (req: Request, res: Response) => {
 export const updateProjectDetails = async (req: any, res: Response) => {
     try {
         const { id } = req.params;
-        const { title, description, longDescription, projectYear, projectType, projectLink } = req.body;
+        const { title, description, longDescription, projectYear, projectType, projectLink, techStack } = req.body;
 
         // Find product details by ID
         const projectDetails = await ProjectService.getProjectById(id);
@@ -83,6 +85,9 @@ export const updateProjectDetails = async (req: any, res: Response) => {
         );
         const finalImages = updatedImages.concat(newImages);
 
+        // Ensure techStack is an array
+        const techStackArray = Array.isArray(techStack) ? techStack : [techStack];
+
         // Prepare updates
         const updates: Partial<typeof projectDetails> = {
             ...(title && { title }),
@@ -92,6 +97,7 @@ export const updateProjectDetails = async (req: any, res: Response) => {
             ...(projectYear && { projectYear }),
             ...(projectLink && { projectLink }),
             imagePath: finalImages,
+            techStack: techStackArray,
         };
 
         // Update product details
@@ -103,6 +109,7 @@ export const updateProjectDetails = async (req: any, res: Response) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 export const getProject = async (req: Request, res: Response) => {
     const { id } = req.params;
     try {

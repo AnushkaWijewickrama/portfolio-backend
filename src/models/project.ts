@@ -7,7 +7,8 @@ export interface IProject extends Document {
     imagePath: string[];
     projectYear: string;
     projectType: string;
-    projectLink: string
+    projectLink: string;
+    techStack: string[]
 }
 
 const projectSchema: Schema<IProject> = new mongoose.Schema({
@@ -18,6 +19,8 @@ const projectSchema: Schema<IProject> = new mongoose.Schema({
     projectYear: { type: String, required: true },
     projectType: { type: String, required: true },
     projectLink: { type: String, required: true },
+    techStack: [{ type: String }]
+
 });
 
 const Project: Model<IProject> = mongoose.model<IProject>('Project', projectSchema);
