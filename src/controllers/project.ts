@@ -11,7 +11,7 @@ export const getProjects = async (req: Request, res: Response) => {
     }
 };
 export const postProject = async (req: any, res: Response): Promise<void> => {
-    const { title, description, longDescription, projectYear, projectType, projectLink, techStack } = req.body;
+    const { title, description, longDescription, projectYear, projectType, projectLink, techStack, role } = req.body;
     const imageData: Express.Multer.File[] | undefined = req?.files?.image as Express.Multer.File[];
     const imagePath: string[] = [];
 
@@ -37,6 +37,7 @@ export const postProject = async (req: any, res: Response): Promise<void> => {
             projectYear,
             projectType,
             projectLink,
+            role,
             techStack: techStackArray
         };
 
@@ -63,7 +64,7 @@ export const deleteProductDetails = async (req: Request, res: Response) => {
 export const updateProjectDetails = async (req: any, res: Response) => {
     try {
         const { id } = req.params;
-        const { title, description, longDescription, projectYear, projectType, projectLink, techStack } = req.body;
+        const { title, description, longDescription, projectYear, projectType, projectLink, techStack, role } = req.body;
 
         // Find product details by ID
         const projectDetails = await ProjectService.getProjectById(id);
@@ -96,6 +97,7 @@ export const updateProjectDetails = async (req: any, res: Response) => {
             ...(projectType && { projectType }),
             ...(projectYear && { projectYear }),
             ...(projectLink && { projectLink }),
+            ...(role && { role }),
             imagePath: finalImages,
             techStack: techStackArray,
         };
@@ -113,9 +115,7 @@ export const updateProjectDetails = async (req: any, res: Response) => {
 export const getProject = async (req: Request, res: Response) => {
     const { id } = req.params;
     try {
-        console.log(id);
         const project = await ProjectService.getProjectById(id); // assuming ProjectService has this method
-        console.log(project, '');
         res.status(200).json(project);
     } catch (error) {
         res.status(500).json({ message: "Error fetching project", error });
