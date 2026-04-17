@@ -19,6 +19,7 @@ const projectSchema: Schema<IProject> = new mongoose.Schema({
     imagePath: [{ type: String }],
     projectYear: { type: String, required: true },
     projectType: { type: String, required: true },
+    projectLink: { type: String, required: true },
     role: { type: String, required: true },
     techStack: [{ type: String }]
 

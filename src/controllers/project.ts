@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { FirebaseStorageService } from '../services/firebasestorage';
+import { SupabaseStorageService } from '../services/supabaseStorage';
 import { ProjectService } from '../services/project';
 
 export const getProjects = async (req: Request, res: Response) => {
@@ -19,7 +19,7 @@ export const postProject = async (req: any, res: Response): Promise<void> => {
         // Process image uploads
         if (Array.isArray(imageData) && imageData.length > 0) {
             const uploadPromises = imageData.map((file) =>
-                FirebaseStorageService.uploadFile(file, 'project')
+                SupabaseStorageService.uploadFile(file, 'project')
             );
             const uploadedImages = await Promise.all(uploadPromises);
             imagePath.push(...uploadedImages);
@@ -77,7 +77,7 @@ export const updateProjectDetails = async (req: any, res: Response) => {
         // Handle image uploads
         if (req.files && req.files.image) {
             const imageData = Array.isArray(req.files.image) ? req.files.image : [req.files.image];
-            newImages = await FirebaseStorageService.uploadFiles(imageData, "projects");
+            newImages = await SupabaseStorageService.uploadFiles(imageData, "projects");
         }
 
         // Retain existing images if necessary
