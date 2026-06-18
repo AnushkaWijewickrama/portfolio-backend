@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { SupabaseStorageService } from '../services/supabaseStorage';
+import { CloudinaryStorageService } from '../services/supabaseStorage';
 import { StackService } from '../services/stack';
 
 export const getStacks = async (req: Request, res: Response) => {
@@ -20,7 +20,7 @@ export const postStack = async (req: any, res: Response): Promise<void> => {
         // Process image uploads
         if (Array.isArray(imageData) && imageData.length > 0) {
             const uploadPromises = imageData.map((file) =>
-                SupabaseStorageService.uploadFile(file, 'stack')
+                CloudinaryStorageService.uploadFile(file, 'stack')
             );
             const uploadedImages = await Promise.all(uploadPromises);
             imagePath.push(...uploadedImages);
@@ -73,7 +73,7 @@ export const updateStackDetails = async (req: any, res: Response) => {
         // Handle image uploads
         if (req.files && req.files.image) {
             const imageData = Array.isArray(req.files.image) ? req.files.image : [req.files.image];
-            newImages = await SupabaseStorageService.uploadFiles(imageData, "stacks");
+            newImages = await CloudinaryStorageService.uploadFiles(imageData, "stacks");
         }
 
         // Retain existing images if necessary

@@ -1,35 +1,66 @@
-import { createClient } from '@supabase/supabase-js';
-import { v4 as uuidv4 } from 'uuid';
+import { v2 as cloudinary } from 'cloudinary';
+import streamifier from 'streamifier';
 
-const supabase = createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY!
-);
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+    api_key: process.env.CLOUDINARY_API_KEY!,
+    api_secret: process.env.CLOUDINARY_API_SECRET!
+});
 
-const BUCKET_NAME = process.env.SUPABASE_BUCKET!;
+export class CloudinaryStorageService {
 
-export class SupabaseStorageService {
-    static async uploadFile(file: Express.Multer.File, folder: string): Promise<string> {
-        const key = `${folder}/${uuidv4()}_${file.originalname}`;
+    static async uploadFile(
+        file: Express.Multer.File,
+        folder: string
+    ): Promise<string> {
 
-        const { error } = await supabase.storage
-            .from(BUCKET_NAME)
-            .upload(key, file.buffer, { contentType: file.mimetype });
+        return new Promise((resolve, reject) => {
 
-        if (error) throw new Error(`Upload failed: ${error.message}`);
+            const stream = cloudinary.uploader.upload_stream(
+                {
+                    folder,
+                    resource_type: 'auto'
+                },
+                (error, result) => {
 
-        const { data } = supabase.storage.from(BUCKET_NAME).getPublicUrl(key);
-        return data.publicUrl;
+                    if (error) {
+                        reject(new Error(`Upload failed: ${error.message}`));
+                        return;
+                    }
+
+                    resolve(result!.secure_url);
+                }
+            );
+
+            streamifier.createReadStream(file.buffer).pipe(stream);
+        });
     }
 
-    static async uploadFiles(files: Express.Multer.File[], folder: string): Promise<string[]> {
-        return Promise.all(files.map((file) => this.uploadFile(file, folder)));
+    static async uploadFiles(
+        files: Express.Multer.File[],
+        folder: string
+    ): Promise<string[]> {
+
+        return Promise.all(
+            files.map(file => this.uploadFile(file, folder))
+        );
     }
 
     static async deleteFile(fileUrl: string): Promise<void> {
-        const key = fileUrl.split(`${BUCKET_NAME}/`)[1];
-        const { error } = await supabase.storage.from(BUCKET_NAME).remove([key]);
-        if (error) throw new Error(`Delete failed: ${error.message}`);
-        console.log(`Successfully deleted file: ${key}`);
+
+        const parts = fileUrl.split('/');
+        const filename = parts.pop()?.split('.')[0];
+
+        if (!filename) {
+            throw new Error('Invalid file URL');
+        }
+
+        const { result } = await cloudinary.uploader.destroy(filename);
+
+        if (result !== 'ok') {
+            throw new Error('Delete failed');
+        }
+
+        console.log(`Deleted: ${filename}`);
     }
 }
